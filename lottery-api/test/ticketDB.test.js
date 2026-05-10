@@ -134,4 +134,48 @@ describe("MyDB Ticket Database", () => {
       expect(uniqueWinners.size).toBe(3);
     });
   });
+
+  describe("drawWinnerNames()", () => {
+    it("should return null if there are no tickets", () => {
+      // Act: Called when the database was empty
+      const winnerNames = myDB.drawWinnerNames(2);
+
+      // Assert: The result is expected to be null.
+      expect(winnerNames).toBeNull();
+    });
+
+    it("should return an array of winner usernames", () => {
+      // Arrange: I made 3 tickets for 3 people.
+      myDB.create("Asion", 100);
+      myDB.create("Selim", 100);
+      myDB.create("Pretom", 100);
+
+      // Act: I drew names of 2 winners.
+      const winnerNames = myDB.drawWinnerNames(2);
+
+      // Assert:
+      expect(winnerNames.length).toBe(2); // Are 2 winner names returned?
+      expect(Array.isArray(winnerNames)).toBe(true); // Is the result an array?
+
+      // Checks whether the data inside the array is actually a string (name), not an object
+      expect(typeof winnerNames[0]).toBe("string");
+      expect(typeof winnerNames[1]).toBe("string");
+
+      // We know that the winner's name will be one of these three
+      const validNames = ["Asion", "Selim", "Pretom"];
+      expect(validNames).toContain(winnerNames[0]); // Is the first winner's name in the list?
+      expect(validNames).toContain(winnerNames[1]); // Is the second winner's name in the list?
+    });
+
+    it("should return the exact same username if only one user has all tickets", () => {
+      // Arrange: I made 3 tickets just for Asion
+      myDB.bulkCreate("Asion", 100, 3);
+
+      // Act: I drew names of 2 winners
+      const winnerNames = myDB.drawWinnerNames(2);
+
+      // Assert: Since all tickets are for Asion, the winner array should contain just ["Asion", "Asion"]
+      expect(winnerNames).toEqual(["Asion", "Asion"]);
+    });
+  });
 });

@@ -151,6 +151,13 @@ class MyDB {
     }
     return winners;
   }
+  drawWinnerNames(winnerCount) {
+    const winners = this.draw(winnerCount);
+    if (winners) {
+      return winners.map((ticket) => ticket.username);
+    }
+    return null;
+  }
 }
 const myDB = new MyDB();
 
