@@ -80,6 +80,29 @@ class MyDB {
   }
 
   /**
+   *
+   * @param {string} username
+   * @param {{username?: string, price?: number}} ticketData
+   * @returns {Array<Ticket>} Array of updated tickets
+   */
+  bulkUpdateByUsername(username, ticketData) {
+    const updatedTickets = [];
+    this.tickets.forEach((ticket) => {
+      if (ticket.username === username) {
+        if (ticketData.username) {
+          ticket.username = ticketData.username;
+        }
+        if (ticketData.price) {
+          ticket.price = ticketData.price;
+        }
+        ticket.updatedAt = new Date();
+        updatedTickets.push(ticket);
+      }
+    });
+    return updatedTickets;
+  }
+
+  /**
    * Delete a ticket by ID
    * @param {string} id
    * @returns {Ticket|null} The deleted ticket or null if not found
@@ -90,6 +113,22 @@ class MyDB {
       return this.tickets.splice(index, 1)[0];
     }
     return null;
+  }
+
+  /**
+   *
+   * @param {string} username
+   * @returns {Array<Ticket>} Array of deleted tickets for the specified username
+   */
+
+  bulkDeleteByUsername(username) {
+    const deletedTickets = this.tickets.filter(
+      (ticket) => ticket.username === username,
+    );
+    this.tickets = this.tickets.filter(
+      (ticket) => ticket.username !== username,
+    );
+    return deletedTickets;
   }
 
   /**
