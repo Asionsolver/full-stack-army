@@ -1,30 +1,30 @@
 const myDB = require("../db/db");
 
-describe("MyDB Ticket Database", () => {
+describe("MyDB Lottery Database", () => {
   // Clearing (resetting) the database before running each test
   // so that one test's data does not affect another test.
   beforeEach(() => {
-    myDB.tickets = [];
+    myDB.lotteries = [];
   });
 
   describe("create()", () => {
-    it("should create a new ticket and add it to the database", () => {
-      const ticket = myDB.create("Asion", 100);
+    it("should create a new lottery and add it to the database", () => {
+      const lottery = myDB.create("Asion", 100);
 
-      expect(ticket).toHaveProperty("id");
-      expect(ticket.username).toBe("Asion");
-      expect(ticket.price).toBe(100);
-      expect(myDB.tickets.length).toBe(1);
+      expect(lottery).toHaveProperty("id");
+      expect(lottery.username).toBe("Asion");
+      expect(lottery.price).toBe(100);
+      expect(myDB.lotteries.length).toBe(1);
     });
   });
 
   describe("bulkCreate()", () => {
-    it("should create multiple tickets for a single user", () => {
-      const tickets = myDB.bulkCreate("Asion", 100, 3);
+    it("should create multiple lotteries for a single user", () => {
+      const lotteries = myDB.bulkCreate("Asion", 100, 3);
 
-      expect(tickets.length).toBe(3);
-      expect(myDB.tickets.length).toBe(3);
-      expect(tickets[0].username).toBe("Asion");
+      expect(lotteries.length).toBe(3);
+      expect(myDB.lotteries.length).toBe(3);
+      expect(lotteries[0].username).toBe("Asion");
     });
   });
 
@@ -35,26 +35,26 @@ describe("MyDB Ticket Database", () => {
       myDB.create("Selim", 200);
     });
 
-    it("should return all tickets", () => {
-      const allTickets = myDB.find();
-      expect(allTickets.length).toBe(3);
+    it("should return all lotteries", () => {
+      const allLotteries = myDB.find();
+      expect(allLotteries.length).toBe(3);
     });
 
-    it("should find a ticket by its ID", () => {
-      const targetTicket = myDB.tickets[1];
-      const foundTicket = myDB.findById(targetTicket.id);
+    it("should find a lottery by its ID", () => {
+      const targetLottery = myDB.lotteries[1];
+      const foundLottery = myDB.findById(targetLottery.id);
 
-      expect(foundTicket).toBeDefined();
-      expect(foundTicket.username).toBe("Selim");
-      expect(foundTicket.id).toBe(targetTicket.id);
+      expect(foundLottery).toBeDefined();
+      expect(foundLottery.username).toBe("Selim");
+      expect(foundLottery.id).toBe(targetLottery.id);
     });
 
-    it("should return tickets by username", () => {
-      const asionTickets = myDB.findByUsername("Asion");
-      const selimTickets = myDB.findByUsername("Selim");
+    it("should return lotteries by username", () => {
+      const asionLotteries = myDB.findByUsername("Asion");
+      const selimLotteries = myDB.findByUsername("Selim");
 
-      expect(asionTickets.length).toBe(1);
-      expect(selimTickets.length).toBe(2);
+      expect(asionLotteries.length).toBe(1);
+      expect(selimLotteries.length).toBe(2);
     });
   });
 
@@ -65,26 +65,28 @@ describe("MyDB Ticket Database", () => {
       myDB.create("Selim", 200);
     });
 
-    it("should update ticket details by ID", () => {
-      const targetTicket = myDB.tickets[0];
-      const updatedTicket = myDB.updateById(targetTicket.id, { price: 150 });
+    it("should update lottery details by ID", () => {
+      const targetLottery = myDB.lotteries[0];
+      const updatedLottery = myDB.updateById(targetLottery.id, { price: 150 });
 
-      expect(updatedTicket.price).toBe(150);
-      expect(updatedTicket.username).toBe("Asion"); // unchanged
+      expect(updatedLottery.price).toBe(150);
+      expect(updatedLottery.username).toBe("Asion"); // unchanged
       // updatedAt can be checked to see if it has changed
     });
 
     it("should return null if updating a non-existent ID", () => {
-      const updatedTicket = myDB.updateById("invalid-id", { price: 150 });
-      expect(updatedTicket).toBeNull();
+      const updatedLottery = myDB.updateById("invalid-id", { price: 150 });
+      expect(updatedLottery).toBeNull();
     });
 
-    it("should update multiple tickets for a username", () => {
-      const updatedTickets = myDB.bulkUpdateByUsername("Selim", { price: 250 });
+    it("should update multiple lotteries for a username", () => {
+      const updatedLotteries = myDB.bulkUpdateByUsername("Selim", {
+        price: 250,
+      });
 
-      expect(updatedTickets.length).toBe(2);
-      expect(updatedTickets[0].price).toBe(250);
-      expect(updatedTickets[1].price).toBe(250);
+      expect(updatedLotteries.length).toBe(2);
+      expect(updatedLotteries[0].price).toBe(250);
+      expect(updatedLotteries[1].price).toBe(250);
     });
   });
 
@@ -95,25 +97,25 @@ describe("MyDB Ticket Database", () => {
       myDB.create("Selim", 200);
     });
 
-    it("should delete a ticket by ID", () => {
-      const targetTicketId = myDB.tickets[0].id;
-      const deletedTicket = myDB.deleteById(targetTicketId);
+    it("should delete a lottery by ID", () => {
+      const targetLotteryId = myDB.lotteries[0].id;
+      const deletedLottery = myDB.deleteById(targetLotteryId);
 
-      expect(deletedTicket.id).toBe(targetTicketId);
-      expect(myDB.tickets.length).toBe(2); // 3 - 1 = 2
+      expect(deletedLottery.id).toBe(targetLotteryId);
+      expect(myDB.lotteries.length).toBe(2); // 3 - 1 = 2
     });
 
     it("should return null if deleting a non-existent ID", () => {
-      const deletedTicket = myDB.deleteById("invalid-id");
-      expect(deletedTicket).toBeNull();
-      expect(myDB.tickets.length).toBe(3); // no change
+      const deletedLottery = myDB.deleteById("invalid-id");
+      expect(deletedLottery).toBeNull();
+      expect(myDB.lotteries.length).toBe(3); // no change
     });
 
-    it("should delete all tickets of a specific user", () => {
-      const deletedTickets = myDB.bulkDeleteByUsername("Selim");
+    it("should delete all lotteries of a specific user", () => {
+      const deletedLotteries = myDB.bulkDeleteByUsername("Selim");
 
-      expect(deletedTickets.length).toBe(2);
-      expect(myDB.tickets.length).toBe(1); // Only "Asion" remains
+      expect(deletedLotteries.length).toBe(2);
+      expect(myDB.lotteries.length).toBe(1); // Only "Asion" remains
     });
   });
 

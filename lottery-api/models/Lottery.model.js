@@ -1,8 +1,8 @@
 const shortid = require("shortid");
 
-class Ticket {
+class Lottery {
   /**
-   * Constructor to create a new ticket
+   * Constructor to create a new lottery
    * @param {string} username
    * @param {number} price
    */
@@ -15,4 +15,4 @@ class Ticket {
   }
 }
 
-module.exports = Ticket;
+module.exports = Lottery;

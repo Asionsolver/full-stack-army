@@ -1,80 +1,80 @@
-const Ticket = require("../models/Tickets.model");
+const Lottery = require("../models/Lottery.model");
 
 class MyDB {
   constructor() {
-    this.tickets = [];
+    this.lotteries = [];
   }
 
   /**
-   * Create and save a new ticket
+   * Create and save a new lottery
    * @param {string} username
    * @param {number} price
-   * @returns {Ticket} The created ticket
+   * @returns {Lottery} The created lottery
    */
   create(username, price) {
-    const ticket = new Ticket(username, price);
-    this.tickets.push(ticket);
-    return ticket;
+    const lottery = new Lottery(username, price);
+    this.lotteries.push(lottery);
+    return lottery;
   }
 
   /**
-   * Create multiple tickets for a single user
+   * Create multiple lotteries for a single user
    * @param {string} username
    * @param {number} price
    * @param {number} quantity
-   * @returns {Array<Ticket>} Array of created multiple tickets
+   * @returns {Array<Lottery>} Array of created multiple lotteries
    */
   bulkCreate(username, price, quantity) {
-    const tickets = [];
+    const lotteries = [];
     for (let i = 0; i < quantity; i++) {
-      tickets.push(this.create(username, price));
+      lotteries.push(this.create(username, price));
     }
-    return tickets;
+    return lotteries;
   }
 
   /**
-   * Find all tickets
-   * @returns {Array<Ticket>} Array of all tickets
+   * Find all lotteries
+   * @returns {Array<Lottery>} Array of all lotteries
    */
   find() {
-    return this.tickets;
+    return this.lotteries;
   }
 
   /**
-   * Find a ticket by ID
+   * Find a lottery by ID
    * @param {string} id
-   * @returns {Ticket|null} The found ticket or null if not found
+   * @returns {Lottery|null} The found lottery or null if not found
    */
   findById(id) {
-    return this.tickets.find((ticket) => ticket.id === id);
+    return this.lotteries.find((lottery) => lottery.id === id);
   }
 
   /**
-   * Find tickets by username
+   * Find lotteries by username
    * @param {string} username
-   * @returns {Array<Ticket>} Array of tickets for the specified username
+   * @returns {Array<Lottery>} Array of lotteries for the specified username
    */
   findByUsername(username) {
-    return this.tickets.filter((ticket) => ticket.username === username);
+    return this.lotteries.filter((lottery) => lottery.username === username);
   }
 
   /**
-   * Update a ticket by ID
+   * Update a lottery by ID
    * @param {string} id
-   * @param {{username?: string, price?: number}} ticketData
-   * @returns {Ticket|null} The updated ticket or null if not found
+   * @param {{username?: string, price?: number}} lotteryData
+   * @returns {Lottery|null} The updated lottery or null if not found
    */
-  updateById(id, ticketData) {
-    const ticket = this.findById(id);
-    if (ticket) {
-      if (ticketData.username) {
-        ticket.username = ticketData.username;
+  updateById(id, lotteryData) {
+    const lottery = this.findById(id);
+    if (lottery) {
+      if (lotteryData.username) {
+        lottery.username = lotteryData.username;
       }
-      if (ticketData.price) {
-        ticket.price = ticketData.price;
+      if (lotteryData.price) {
+        lottery.price = lotteryData.price;
       }
-      ticket.updatedAt = new Date();
-      return ticket;
+      lottery.updatedAt = new Date();
+      return lottery;
     }
     return null;
   }
@@ -82,35 +82,35 @@ class MyDB {
   /**
    *
    * @param {string} username
-   * @param {{username?: string, price?: number}} ticketData
-   * @returns {Array<Ticket>} Array of updated tickets
+   * @param {{username?: string, price?: number}} lotteryData
+   * @returns {Array<Lottery>} Array of updated lotteries
    */
-  bulkUpdateByUsername(username, ticketData) {
-    const updatedTickets = [];
-    this.tickets.forEach((ticket) => {
-      if (ticket.username === username) {
-        if (ticketData.username) {
-          ticket.username = ticketData.username;
+  bulkUpdateByUsername(username, lotteryData) {
+    const updatedLotteries = [];
+    this.lotteries.forEach((lottery) => {
+      if (lottery.username === username) {
+        if (lotteryData.username) {
+          lottery.username = lotteryData.username;
         }
-        if (ticketData.price) {
-          ticket.price = ticketData.price;
+        if (lotteryData.price) {
+          lottery.price = lotteryData.price;
         }
-        ticket.updatedAt = new Date();
-        updatedTickets.push(ticket);
+        lottery.updatedAt = new Date();
+        updatedLotteries.push(lottery);
       }
     });
-    return updatedTickets;
+    return updatedLotteries;
   }
 
   /**
-   * Delete a ticket by ID
+   * Delete a lottery by ID
    * @param {string} id
-   * @returns {Ticket|null} The deleted ticket or null if not found
+   * @returns {Lottery|null} The deleted lottery or null if not found
    */
   deleteById(id) {
-    const index = this.tickets.findIndex((ticket) => ticket.id === id);
+    const index = this.lotteries.findIndex((lottery) => lottery.id === id);
     if (index !== -1) {
-      return this.tickets.splice(index, 1)[0];
+      return this.lotteries.splice(index, 1)[0];
     }
     return null;
   }
@@ -118,35 +118,35 @@ class MyDB {
   /**
    *
    * @param {string} username
-   * @returns {Array<Ticket>} Array of deleted tickets for the specified username
+   * @returns {Array<Lottery>} Array of deleted lotteries for the specified username
    */
 
   bulkDeleteByUsername(username) {
-    const deletedTickets = this.tickets.filter(
-      (ticket) => ticket.username === username,
+    const deletedLotteries = this.lotteries.filter(
+      (lottery) => lottery.username === username,
     );
-    this.tickets = this.tickets.filter(
-      (ticket) => ticket.username !== username,
+    this.lotteries = this.lotteries.filter(
+      (lottery) => lottery.username !== username,
     );
-    return deletedTickets;
+    return deletedLotteries;
   }
 
   /**
-   * Draw a random ticket
+   * Draw a random lottery
    * @param {number} winnerCount - Number of winners to draw
-   * @returns {Ticket|null} The drawn ticket or null if no tickets available
+   * @returns {Array<Lottery>|null} The drawn lotteries or null if no lotteries available
    */
   draw(winnerCount) {
-    if (this.tickets.length === 0) {
+    if (this.lotteries.length === 0) {
       return null;
     }
     const winners = [];
     for (let i = 0; i < winnerCount; i++) {
-      const randomIndex = Math.floor(Math.random() * this.tickets.length);
-      if (!winners.includes(this.tickets[randomIndex])) {
-        winners.push(this.tickets[randomIndex]);
+      const randomIndex = Math.floor(Math.random() * this.lotteries.length);
+      if (!winners.includes(this.lotteries[randomIndex])) {
+        winners.push(this.lotteries[randomIndex]);
       } else {
-        i--; // If the ticket is already a winner, try again
+        i--; // If the lottery is already a winner, try again
       }
     }
     return winners;
@@ -154,7 +154,7 @@ class MyDB {
   drawWinnerNames(winnerCount) {
     const winners = this.draw(winnerCount);
     if (winners) {
-      return winners.map((ticket) => ticket.username);
+      return winners.map((lottery) => lottery.username);
     }
     return null;
   }
