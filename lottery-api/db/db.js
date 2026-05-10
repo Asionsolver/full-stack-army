@@ -151,12 +151,67 @@ class MyDB {
     }
     return winners;
   }
+
+  /**
+   *
+   * @param {number} winnerCount
+   * @returns {Array<string>|null} Array of winner names or null if no lotteries available
+   */
   drawWinnerNames(winnerCount) {
     const winners = this.draw(winnerCount);
     if (winners) {
       return winners.map((lottery) => lottery.username);
     }
     return null;
+  }
+
+  /**
+   *
+   * @returns {number} The total sales amount from all lotteries
+   */
+  getTotalSales() {
+    return this.lotteries.reduce((total, lottery) => total + lottery.price, 0);
+  }
+
+  /**
+   *
+   * @returns {number} The total count of lotteries
+   */
+  count() {
+    return this.lotteries.length;
+  }
+
+  /**
+   *
+   * @returns {Object} Lottery statistics
+   */
+  getStatistics() {
+    const totalLotteries = this.count();
+    const totalSales = this.getTotalSales();
+    const averagePrice = totalLotteries > 0 ? totalSales / totalLotteries : 0;
+    return {
+      totalLotteries,
+      totalSales,
+      averagePrice,
+    };
+  }
+
+  // Get Lottery History
+  getHistory() {
+    return this.lotteries.map((lottery) => ({
+      id: lottery.id,
+      username: lottery.username,
+      price: lottery.price,
+      createdAt: lottery.createdAt,
+      updatedAt: lottery.updatedAt,
+    }));
+  }
+
+  // Delete All Lotteries
+  deleteAll() {
+    const deletedLotteries = [...this.lotteries];
+    this.lotteries = [];
+    return deletedLotteries;
   }
 }
 const myDB = new MyDB();

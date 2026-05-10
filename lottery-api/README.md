@@ -4,28 +4,27 @@
 
 ## API Endpoints
 
-- Sell Lottery Lotteries -----------------------------------> `POST/lottery/sell`
-- Bulk Sell Lottery Lotteries ------------------------------> `POST/lottery/bulk`
-- Get All Lotteries ----------------------------------------> `GET/lottery/lotteries`
-- Get Lottery by ID --------------------------------------> `GET/lottery/t/:LotteryId`
-- Delete Lottery by ID -----------------------------------> `DELETE/lottery/t/:LotteryId`
-- Update Lottery Information ID --------------------------> `PATCH/lottery/t/:LotteryId`
-- Bulk Update Lottery Information by IDs -----------------> `PATCH/lottery/t/update/bulk/:LotteryIds`
-- Bulk Delete Lottery by IDs -----------------------------> `DELETE/lottery/delete/bulk/t/:LotteryIds`
-- Get Lottery Username -----------------------------------> `GET/lottery/u/:username`
-- Delete Lottery by Username -----------------------------> `DELETE/lottery/u/:username`
-- Bulk Update Lottery Information by Username ------------> `PATCH/lottery/u/update/bulk/:username`
-- Bulk Delete Lottery by Username ------------------------> `DELETE/lottery/delete/bulk/u/:username`
-- Get Lottery Count --------------------------------------> `GET/lottery/count`
-- Draw Lottery Winners -----------------------------------> `POST/lottery/draw`
-- Get Lottery Total Sales --------------------------------> `GET/lottery/total-sales`
-- Get Lottery Winners Names ------------------------------> `GET/lottery/winners/names`
+- Sell Lotteries -----------------------------------------> `POST/lotteries/sell` --------------------------------> DONE --------> TEST DONE
+- Bulk Sell Lotteries ------------------------------------> `POST/lotteries/sell/bulk` ---------------------------> DONE --------> TEST DONE
+- Get All Lotteries --------------------------------------> `GET/lotteries` --------------------------------------> DONE --------> TEST DONE
+- Get Lottery by ID --------------------------------------> `GET/lotteries/t/:lotteriesId` -----------------------> DONE --------> TEST DONE
+- Delete Lottery by ID -----------------------------------> `DELETE/lotteries/t/:lotteriesId` --------------------> DONE --------> TEST DONE
+- Update Lottery Information ID --------------------------> `PATCH/lotteries/t/:lotteriesId` ---------------------> DONE --------> TEST DONE
+- Bulk Update Lottery Information by IDs -----------------> `PATCH/lotteries/t/update/bulk/:lotteriesIds` --------> DONE --------> TEST DONE
+- Bulk Delete Lottery by IDs -----------------------------> `DELETE/lotteries/delete/bulk/t/:lotteriesIds` -------> DONE --------> TEST DONE
+- Get Lottery Username -----------------------------------> `GET/lotteries/u/:username` --------------------------> DONE --------> TEST DONE
+- Delete Lottery by Username -----------------------------> `DELETE/lotteries/u/:username` -----------------------> DONE --------> TEST DONE
+- Bulk Update Lottery Information by Username ------------> `PATCH/lotteries/u/update/bulk` ----------------------> DONE --------> TEST DONE
+- Bulk Delete Lottery by Username ------------------------> `DELETE/lotteries/delete/bulk/u` ---------------------> DONE --------> TEST DONE
+- Get Lottery Count --------------------------------------> `GET/lotteries/count` --------------------------------> DONE --------> TEST DONE
+- Draw Lottery Winners -----------------------------------> `POST/lotteries/draw` --------------------------------> DONE --------> TEST DONE
+- Get Lottery Total Sales --------------------------------> `GET/lotteries/total-sales` --------------------------> DONE --------> TEST DONE
+- Get Lottery Winners Names ------------------------------> `GET/lotteries/winners/names` ------------------------> DONE --------> TEST DONE
 
 <!-- Extra Endpoints -->
 
-- Get Lottery Statistics ---------------------------------> `GET/lottery/statistics`
-- Get Lottery History ------------------------------------> `GET/lottery/history`
-- Get Lottery Information --------------------------------> `GET/lottery/info`
+- Get Lottery Statistics ---------------------------------> `GET/lotteries/statistics`
+- Get Lottery History ------------------------------------> `GET/lotteries/history`
 
 <!-- Lottery Model -->
 
