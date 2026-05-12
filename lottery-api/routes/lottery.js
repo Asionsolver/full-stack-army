@@ -91,8 +91,8 @@ router.post("/lotteries/sell", (req, res) => {
 
 // Bulk Sell Lotteries
 router.post("/lotteries/sell/bulk", (req, res) => {
-  const { usernames, price, quantity } = req.body;
-  const lotteries = myDB.bulkCreate(usernames, price, quantity);
+  const { username, price, quantity } = req.body;
+  const lotteries = myDB.bulkCreate(username, price, quantity);
   res.status(201).json({
     message: "Lotteries sold successfully",
     lotteries,

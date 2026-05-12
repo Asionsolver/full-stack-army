@@ -1,6 +1,6 @@
 const router = require("express").Router();
 
-router.use("api/v1/tickets", require("../routes/lottery"));
+router.use("/api/v1/", require("../routes/lottery"));
 
 router.get("/health", (_req, res) => {
   //   throw new Error("Test error");

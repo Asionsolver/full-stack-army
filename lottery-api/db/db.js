@@ -25,7 +25,10 @@ class MyDB {
    * @returns {Array<Lottery>} Array of created multiple lotteries
    */
   bulkCreate(username, price, quantity) {
-    const lotteries = [];
+
+    const lotteries = []; 
+
+    
     for (let i = 0; i < quantity; i++) {
       lotteries.push(this.create(username, price));
     }
