@@ -3,6 +3,7 @@ const Lottery = require("../models/Lottery.model");
 class MyDB {
   constructor() {
     this.lotteries = [];
+    this.winners = [];
   }
 
   /**
@@ -25,10 +26,8 @@ class MyDB {
    * @returns {Array<Lottery>} Array of created multiple lotteries
    */
   bulkCreate(username, price, quantity) {
+    const lotteries = [];
 
-    const lotteries = []; 
-
-    
     for (let i = 0; i < quantity; i++) {
       lotteries.push(this.create(username, price));
     }
@@ -83,24 +82,23 @@ class MyDB {
   }
 
   /**
-   *
+   * Update lotteries by username
    * @param {string} username
-   * @param {{username?: string, price?: number}} lotteryData
-   * @returns {Array<Lottery>} Array of updated lotteries
+   * @param {{price?: number}} lotteryData
+   * @returns {Array<Lottery>|null} Array of updated lotteries or null if no lotteries found for the username
    */
-  bulkUpdateByUsername(username, lotteryData) {
+  updateByUsername(username, lotteryData) {
+    const lotteries = this.findByUsername(username);
+    if (lotteries.length === 0) {
+      return null;
+    }
     const updatedLotteries = [];
-    this.lotteries.forEach((lottery) => {
-      if (lottery.username === username) {
-        if (lotteryData.username) {
-          lottery.username = lotteryData.username;
-        }
-        if (lotteryData.price) {
-          lottery.price = lotteryData.price;
-        }
-        lottery.updatedAt = new Date();
-        updatedLotteries.push(lottery);
+    lotteries.forEach((lottery) => {
+      if (lotteryData.price) {
+        lottery.price = lotteryData.price;
       }
+      lottery.updatedAt = new Date();
+      updatedLotteries.push(lottery);
     });
     return updatedLotteries;
   }
@@ -119,7 +117,22 @@ class MyDB {
   }
 
   /**
-   *
+   * Delete a lottery by username
+   * @param {string} username
+   * @returns {Lottery|null} The deleted lottery or null if not found
+   */
+  deleteByUsername(username) {
+    const index = this.lotteries.findIndex(
+      (lottery) => lottery.username === username,
+    );
+    if (index !== -1) {
+      return this.lotteries.splice(index, 1)[0];
+    }
+    return null;
+  }
+
+  /**
+   * Bulk delete lotteries by username
    * @param {string} username
    * @returns {Array<Lottery>} Array of deleted lotteries for the specified username
    */
@@ -137,35 +150,37 @@ class MyDB {
   /**
    * Draw a random lottery
    * @param {number} winnerCount - Number of winners to draw
-   * @returns {Array<Lottery>|null} The drawn lotteries or null if no lotteries available
+   * @returns {Array<Lottery>|null} Array of drawn winners or null if no lotteries available
    */
   draw(winnerCount) {
     if (this.lotteries.length === 0) {
       return null;
     }
-    const winners = [];
+    const drawnWinners = [];
     for (let i = 0; i < winnerCount; i++) {
       const randomIndex = Math.floor(Math.random() * this.lotteries.length);
-      if (!winners.includes(this.lotteries[randomIndex])) {
-        winners.push(this.lotteries[randomIndex]);
+      if (!drawnWinners.includes(this.lotteries[randomIndex])) {
+        drawnWinners.push(this.lotteries[randomIndex]);
       } else {
-        i--; // If the lottery is already a winner, try again
+        i--;
       }
     }
-    return winners;
+
+    // New: Saved the drawn winners in this.winners
+    this.winners = drawnWinners;
+
+    return this.winners;
   }
 
-  /**
-   *
-   * @param {number} winnerCount
-   * @returns {Array<string>|null} Array of winner names or null if no lotteries available
+  /**   * Get the names of the drawn winners
+   * @returns {Array<string>} Array of winner usernames
    */
-  drawWinnerNames(winnerCount) {
-    const winners = this.draw(winnerCount);
-    if (winners) {
-      return winners.map((lottery) => lottery.username);
+  getWinnersNames() {
+    // New: Saved the drawn winners in this.winners
+    if (this.winners && this.winners.length > 0) {
+      return this.winners.map((lottery) => lottery.username);
     }
-    return null;
+    return [];
   }
 
   /**

@@ -30,7 +30,7 @@ router
     if (!lottery) {
       return res.status(404).json({ message: "Lottery not found" });
     }
-    myDB.delete(lotteryId);
+    myDB.deleteById(lotteryId);
     res.status(200).json({ message: "Lottery deleted" });
   });
 
@@ -58,9 +58,9 @@ router
         .status(404)
         .json({ message: "No lotteries found for this username" });
     }
-    const updatedLotteries = myDB.bulkUpdateByUsername(username, { price });
+    const updatedLotteries = myDB.updateByUsername(username, { price });
     res.status(200).json({
-      message: "Lotteries updated",
+      message: "Lotteries updated successfully",
       lotteries: updatedLotteries,
     });
   })
@@ -72,8 +72,11 @@ router
         .status(404)
         .json({ message: "No lotteries found for this username" });
     }
-    lotteries.forEach((lottery) => myDB.delete(lottery.id));
-    res.status(200).json({ message: "Lotteries deleted", lotteries });
+    const deletedLotteries = myDB.bulkDeleteByUsername(username);
+    res.status(200).json({
+      message: "Lotteries deleted for username",
+      lotteries: deletedLotteries,
+    });
   });
 
 // Sell Lotteries
@@ -95,83 +98,6 @@ router.post("/lotteries/sell/bulk", (req, res) => {
   const lotteries = myDB.bulkCreate(username, price, quantity);
   res.status(201).json({
     message: "Lotteries sold successfully",
-    lotteries,
-  });
-});
-
-// Bulk Update Lottery Information by IDs
-router.patch("/lotteries/update/bulk/t", (req, res) => {
-  const { lotteryIds, price } = req.body;
-  if (!Array.isArray(lotteryIds) || lotteryIds.length === 0) {
-    return res.status(400).json({ message: "Lottery IDs array is required" });
-  }
-  if (!price) {
-    return res.status(400).json({ message: "Price is required for update" });
-  }
-  const updatedLotteries = [];
-  for (const lotteryId of lotteryIds) {
-    const updatedLottery = myDB.updateById(lotteryId, { price });
-    if (updatedLottery) {
-      updatedLotteries.push(updatedLottery);
-    }
-  }
-  res.status(200).json({
-    message: "Lotteries updated successfully",
-    lotteries: updatedLotteries,
-  });
-});
-
-// Bulk Delete Lotteries by IDs
-router.delete("/lotteries/delete/bulk/t", (req, res) => {
-  const { lotteryIds } = req.body;
-  if (!Array.isArray(lotteryIds) || lotteryIds.length === 0) {
-    return res.status(400).json({ message: "Lottery IDs array is required" });
-  }
-  const deletedLotteries = [];
-  for (const lotteryId of lotteryIds) {
-    const deletedLottery = myDB.deleteById(lotteryId);
-    if (deletedLottery) {
-      deletedLotteries.push(deletedLottery);
-    }
-  }
-  res.status(200).json({
-    message: "Lotteries deleted successfully",
-    lotteries: deletedLotteries,
-  });
-});
-
-// Bulk Update Lottery Information by Username
-router.patch("/lotteries/update/bulk/u", (req, res) => {
-  const { username } = req.params;
-  const { price } = req.body;
-  if (!price) {
-    return res.status(400).json({ message: "Price is required for update" });
-  }
-  const lotteries = myDB.findByUsername(username);
-  if (lotteries.length === 0) {
-    return res
-      .status(404)
-      .json({ message: "No lotteries found for this username" });
-  }
-  const updatedLotteries = myDB.bulkUpdateByUsername(username, { price });
-  res.status(200).json({
-    message: "Lotteries updated successfully",
-    lotteries: updatedLotteries,
-  });
-});
-
-// Bulk Delete Lotteries by Username
-router.delete("/lotteries/delete/bulk/u", (req, res) => {
-  const { username } = req.params;
-  const lotteries = myDB.findByUsername(username);
-  if (lotteries.length === 0) {
-    return res
-      .status(404)
-      .json({ message: "No lotteries found for this username" });
-  }
-  lotteries.forEach((lottery) => myDB.delete(lottery.id));
-  res.status(200).json({
-    message: "Lotteries deleted successfully",
     lotteries,
   });
 });
