@@ -19,8 +19,8 @@
 
 <!-- Extra Endpoints -->
 
-- Get Lottery Statistics ---------------------------------> `GET/lotteries/statistics`
-- Get Lottery History ------------------------------------> `GET/lotteries/history`
+- Get Lottery Statistics ---------------------------------> `GET/lotteries/statistics` ---------------------------> DONE --------> TEST DONE
+- Get Lottery History ------------------------------------> `GET/lotteries/history` ------------------------------> DONE --------> TEST DONE
 
 <!-- Lottery Model -->
 
