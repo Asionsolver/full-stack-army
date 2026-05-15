@@ -1,115 +1,121 @@
-import { useState, useEffect, useCallback } from 'react';
-import { lotteryAPI } from '../services/lottery';
-import type { Lottery } from '../types';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMemo } from 'react'
+import { lotteryAPI } from '../services/lottery'
+import { useAppStore } from '../store'
+import toast from 'react-hot-toast'
 
-interface UseStatsReturn {
-  stats: { count: number; totalSales: number; winners: number };
-  loading: boolean;
-  error: string | null;
-  refetch: () => void;
-}
-
-export const useStats = (): UseStatsReturn => {
-  const [stats, setStats] = useState({ count: 0, totalSales: 0, winners: 0 });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchStats = useCallback(async () => {
-    try {
-      setLoading(true);
+export const useStats = () => {
+  return useQuery({
+    queryKey: ['stats'],
+    queryFn: async () => {
       const [countData, salesData, winnersData] = await Promise.all([
         lotteryAPI.getCount(),
         lotteryAPI.getTotalSales(),
         lotteryAPI.getWinnersNames(),
-      ]);
-      setStats({
+      ])
+      return {
         count: countData.count,
         totalSales: salesData.totalSales,
         winners: winnersData.winnersNames.length,
-      });
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch stats');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchStats();
-    const interval = setInterval(fetchStats, 5000);
-    return () => clearInterval(interval);
-  }, [fetchStats]);
-
-  return { stats, loading, error, refetch: fetchStats };
-};
-
-interface UseLotteriesReturn {
-  lotteries: Lottery[];
-  loading: boolean;
-  error: string | null;
-  refetch: () => void;
-  deleteLottery: (id: string) => Promise<void>;
+      }
+    },
+    staleTime: 1000 * 30,
+    refetchInterval: 5000,
+  })
 }
 
-export const useLotteries = (refreshTrigger = 0): UseLotteriesReturn => {
-  const [lotteries, setLotteries] = useState<Lottery[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchLotteries = useCallback(async () => {
-    try {
-      setLoading(true);
-      const data = await lotteryAPI.getAll();
-      setLotteries(data.lotteries);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch lotteries');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  const deleteLottery = async (id: string) => {
-    await lotteryAPI.delete(id);
-    setLotteries((prev) => prev.filter((l) => l.id !== id));
-  };
-
-  useEffect(() => {
-    fetchLotteries();
-  }, [fetchLotteries, refreshTrigger]);
-
-  return { lotteries, loading, error, refetch: fetchLotteries, deleteLottery };
-};
-
-interface UseWinnersReturn {
-  winners: string[];
-  loading: boolean;
-  error: string | null;
-  refetch: () => void;
+export const useStatistics = () => {
+  return useQuery({
+    queryKey: ['statistics'],
+    queryFn: async () => {
+      const { statistics } = await lotteryAPI.getStatistics()
+      return statistics
+    },
+    staleTime: 1000 * 60,
+  })
 }
 
-export const useWinners = (refreshTrigger = 0): UseWinnersReturn => {
-  const [winners, setWinners] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export const useLotteries = (refreshTrigger = 0) => {
+  const queryClient = useQueryClient()
+  const { filters, searchQuery, pagination } = useAppStore()
 
-  const fetchWinners = useCallback(async () => {
-    try {
-      setLoading(true);
-      const data = await lotteryAPI.getWinnersNames();
-      setWinners(data.winnersNames);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch winners');
-    } finally {
-      setLoading(false);
+  const lotteriesQuery = useQuery({
+    queryKey: ['lotteries', refreshTrigger],
+    queryFn: () => lotteryAPI.getAll(),
+    staleTime: 1000 * 30,
+  })
+
+  const filteredData = useMemo(() => {
+    if (!lotteriesQuery.data) return []
+
+    let data = lotteriesQuery.data.lotteries
+
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase()
+      data = data.filter(
+        (l) => l.username.toLowerCase().includes(query) || l.id.toLowerCase().includes(query)
+      )
     }
-  }, []);
 
-  useEffect(() => {
-    fetchWinners();
-  }, [fetchWinners, refreshTrigger]);
+    if (filters.dateFrom) {
+      data = data.filter((l) => new Date(l.createdAt) >= new Date(filters.dateFrom!))
+    }
+    if (filters.dateTo) {
+      data = data.filter((l) => new Date(l.createdAt) <= new Date(filters.dateTo!))
+    }
+    if (filters.minPrice !== null) {
+      data = data.filter((l) => l.price >= filters.minPrice!)
+    }
+    if (filters.maxPrice !== null) {
+      data = data.filter((l) => l.price <= filters.maxPrice!)
+    }
+    if (filters.winnerOnly) {
+      data = data.filter((l) => l.isWinner)
+    }
 
-  return { winners, loading, error, refetch: fetchWinners };
-};
+    return data
+  }, [lotteriesQuery.data, searchQuery, filters])
+
+  const paginatedData = useMemo(() => {
+    const start = (pagination.page - 1) * pagination.limit
+    return filteredData.slice(start, start + pagination.limit)
+  }, [filteredData, pagination.page, pagination.limit])
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => lotteryAPI.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['lotteries'] })
+      toast.success('Lottery deleted successfully!')
+    },
+    onError: () => {
+      toast.error('Failed to delete lottery')
+    },
+  })
+
+  return {
+    lotteries: paginatedData,
+    allLotteries: filteredData,
+    totalCount: filteredData.length,
+    loading: lotteriesQuery.isLoading,
+    error: lotteriesQuery.error,
+    refetch: lotteriesQuery.refetch,
+    deleteLottery: deleteMutation.mutate,
+  }
+}
+
+export const useWinners = (refreshTrigger = 0) => {
+  return useQuery({
+    queryKey: ['winners', refreshTrigger],
+    queryFn: () => lotteryAPI.getWinnersNames(),
+    staleTime: 1000 * 30,
+    refetchInterval: 5000,
+  })
+}
+
+export const useLotteryById = (id: string) => {
+  return useQuery({
+    queryKey: ['lottery', id],
+    queryFn: () => lotteryAPI.getById(id),
+    enabled: !!id,
+  })
+}

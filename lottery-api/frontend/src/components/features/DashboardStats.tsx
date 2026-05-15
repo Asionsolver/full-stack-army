@@ -1,17 +1,17 @@
-import { useStats } from '../../hooks/useLotteries';
-import { StatCard, LoadingSpinner, ErrorMessage } from '../ui';
+import { useStats } from '../../hooks/useLotteries'
+import { StatCard, LoadingSpinner, ErrorMessage } from '../ui'
 
 export const DashboardStats = () => {
-  const { stats, loading, error, refetch } = useStats();
+  const { data: stats, isLoading, error, refetch } = useStats()
 
-  if (loading) return <LoadingSpinner />;
-  if (error) return <ErrorMessage message={error} onRetry={refetch} />;
+  if (isLoading) return <LoadingSpinner />
+  if (error) return <ErrorMessage message={error instanceof Error ? error.message : 'Failed to load stats'} onRetry={refetch} />
 
   const metrics = [
-    { title: 'Total Lotteries', value: stats.count, icon: '🎫', color: 'indigo' },
-    { title: 'Total Sales', value: `$${stats.totalSales.toLocaleString()}`, icon: '💰', color: 'emerald' },
-    { title: 'Total Winners', value: stats.winners, icon: '🏆', color: 'amber' },
-  ];
+    { title: 'Total Lotteries', value: stats?.count ?? 0, icon: '🎫', color: 'indigo' },
+    { title: 'Total Sales', value: `$${(stats?.totalSales ?? 0).toLocaleString()}`, icon: '💰', color: 'emerald' },
+    { title: 'Total Winners', value: stats?.winners ?? 0, icon: '🏆', color: 'amber' },
+  ]
 
   return (
     <div className="space-y-8">
@@ -97,5 +97,5 @@ export const DashboardStats = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

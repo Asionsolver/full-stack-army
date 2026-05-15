@@ -1,17 +1,53 @@
-import { useState } from 'react';
-import { DashboardPage } from './pages/DashboardPage';
-import { DrawWinners, SellForm, WinnerList } from './components';
-import { LotteriesPage } from './pages/LotteriesPage';
+import { lazy, Suspense, useState, useEffect } from 'react'
+import { Loader2 } from 'lucide-react'
+import toast from 'react-hot-toast'
+import { useAppStore } from './store'
+import { ThemeToggle } from './components/ui/ThemeToggle'
+import { ConnectionStatus } from './components/ui/ConnectionStatus'
+import { useWebSocket } from './hooks/useWebSocket'
 
-type Tab = 'dashboard' | 'lotteries' | 'sell' | 'draw' | 'winners';
+const DashboardPage = lazy(() => import('./pages/DashboardPage').then(m => ({ default: m.DashboardPage })))
+const LotteriesPage = lazy(() => import('./pages/LotteriesPage').then(m => ({ default: m.LotteriesPage })))
+const WinnerList = lazy(() => import('./components/features/WinnerList').then(m => ({ default: m.WinnerList })))
+const SellForm = lazy(() => import('./components/features/SellForm').then(m => ({ default: m.SellForm })))
+const DrawWinners = lazy(() => import('./components/features/DrawWinners').then(m => ({ default: m.DrawWinners })))
+
+type Tab = 'dashboard' | 'lotteries' | 'sell' | 'draw' | 'winners'
+
+const PageLoader = () => (
+  <div className="flex items-center justify-center min-h-[400px]">
+    <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
+  </div>
+)
 
 function App() {
-  const [activeTab, setActiveTab] = useState<Tab>('dashboard');
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [activeTab, setActiveTab] = useState<Tab>('dashboard')
+  const [refreshTrigger, setRefreshTrigger] = useState(0)
+  const { darkMode } = useAppStore()
 
-  const handleRefresh = () => setRefreshTrigger((prev) => prev + 1);
+  const { isConnected } = useWebSocket({
+    url: import.meta.env.VITE_WS_URL || 'ws://localhost:3000/ws',
+    onMessage: (data: unknown) => {
+      const msg = data as { type?: string }
+      if (msg.type === 'new_lottery' || msg.type === 'winner_drawn') {
+        setRefreshTrigger((prev) => prev + 1)
+        toast.success('New data received!', { icon: '🔔' })
+      }
+    },
+    reconnectAttempts: 3,
+  })
 
-  const showSidebar = activeTab !== 'dashboard' && activeTab !== 'lotteries';
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  }, [darkMode])
+
+  const handleRefresh = () => setRefreshTrigger((prev) => prev + 1)
+
+  const showSidebar = activeTab !== 'dashboard' && activeTab !== 'lotteries'
 
   const tabs = [
     { id: 'dashboard', label: 'Dashboard', icon: '📊' },
@@ -19,29 +55,29 @@ function App() {
     { id: 'sell', label: 'Sell', icon: '💵' },
     { id: 'draw', label: 'Draw', icon: '🎲' },
     { id: 'winners', label: 'Winners', icon: '🏆' },
-  ] as const;
+  ] as const
 
   const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
-        return <DashboardPage />;
+        return <DashboardPage refreshTrigger={refreshTrigger} />
       case 'lotteries':
-        return <LotteriesPage refreshTrigger={refreshTrigger} />;
+        return <LotteriesPage refreshTrigger={refreshTrigger} />
       case 'sell':
-        return <SellForm onSuccess={handleRefresh} />;
+        return <SellForm onSuccess={handleRefresh} />
       case 'draw':
-        return <DrawWinners onSuccess={handleRefresh} />;
+        return <DrawWinners onSuccess={handleRefresh} />
       case 'winners':
-        return <WinnerList refreshTrigger={refreshTrigger} />;
+        return <WinnerList refreshTrigger={refreshTrigger} />
       default:
-        return null;
+        return null
     }
-  };
+  }
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-slate-900 dark:bg-slate-950">
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMyNzI5M2YiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-40" />
-      
+
       <nav className="relative bg-slate-800/80 backdrop-blur-xl border-b border-slate-700/50 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
@@ -57,6 +93,7 @@ function App() {
               </div>
             </div>
             <div className="flex items-center space-x-2">
+              <ConnectionStatus isConnected={isConnected} />
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
@@ -74,32 +111,35 @@ function App() {
                   )}
                 </button>
               ))}
+              <ThemeToggle />
             </div>
           </div>
         </div>
       </nav>
 
       <main className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {showSidebar ? (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2">{renderContent()}</div>
-            <div className="space-y-6">
-              <WinnerList refreshTrigger={refreshTrigger} />
-              <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-2xl blur-xl" />
-                <div className="relative bg-slate-800/60 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50">
-                  <h3 className="font-bold text-white mb-2 flex items-center gap-2">
-                    <span className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse" />
-                    Quick Stats
-                  </h3>
-                  <p className="text-sm text-slate-400">Check the dashboard for detailed statistics</p>
+        <Suspense fallback={<PageLoader />}>
+          {showSidebar ? (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2">{renderContent()}</div>
+              <div className="space-y-6">
+                <WinnerList refreshTrigger={refreshTrigger} />
+                <div className="relative group">
+                  <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-2xl blur-xl" />
+                  <div className="relative bg-slate-800/60 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50">
+                    <h3 className="font-bold text-white mb-2 flex items-center gap-2">
+                      <span className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse" />
+                      Quick Stats
+                    </h3>
+                    <p className="text-sm text-slate-400">Check the dashboard for detailed statistics</p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ) : (
-          renderContent()
-        )}
+          ) : (
+            renderContent()
+          )}
+        </Suspense>
       </main>
 
       <footer className="relative border-t border-slate-700/50 bg-slate-800/50 backdrop-blur-xl mt-auto">
@@ -108,7 +148,7 @@ function App() {
         </div>
       </footer>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

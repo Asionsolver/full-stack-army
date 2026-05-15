@@ -1,15 +1,17 @@
-import { useWinners } from '../../hooks/useLotteries';
-import { LoadingSpinner, ErrorMessage } from '../ui';
+import { useWinners } from '../../hooks/useLotteries'
+import { LoadingSpinner, ErrorMessage } from '../ui'
 
 interface WinnerListProps {
-  refreshTrigger?: number;
+  refreshTrigger?: number
 }
 
 export const WinnerList = ({ refreshTrigger = 0 }: WinnerListProps) => {
-  const { winners, loading, error, refetch } = useWinners(refreshTrigger);
+  const { data, isLoading, error, refetch } = useWinners(refreshTrigger)
 
-  if (loading) return <LoadingSpinner size="sm" />;
-  if (error) return <ErrorMessage message={error} onRetry={refetch} />;
+  const winners = data?.winnersNames ?? []
+
+  if (isLoading) return <LoadingSpinner size="sm" />
+  if (error) return <ErrorMessage message={error instanceof Error ? error.message : 'Failed to load winners'} onRetry={refetch} />
 
   return (
     <div className="relative group">
@@ -22,7 +24,7 @@ export const WinnerList = ({ refreshTrigger = 0 }: WinnerListProps) => {
           <p className="text-slate-400 text-center py-6">No winners yet</p>
         ) : (
           <div className="flex flex-wrap gap-2">
-            {winners.map((winner, idx) => (
+            {winners.map((winner: string, idx: number) => (
               <span
                 key={idx}
                 className="px-4 py-2 bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-300 rounded-full text-sm font-medium border border-amber-500/30 hover:scale-105 transition-transform cursor-default"
@@ -34,5 +36,5 @@ export const WinnerList = ({ refreshTrigger = 0 }: WinnerListProps) => {
         )}
       </div>
     </div>
-  );
-};
+  )
+}
