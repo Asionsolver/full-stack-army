@@ -12,22 +12,27 @@ export const WinnerList = ({ refreshTrigger = 0 }: WinnerListProps) => {
   if (error) return <ErrorMessage message={error} onRetry={refetch} />;
 
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-      <h2 className="text-xl font-bold text-gray-800 mb-4">🏆 Winner List</h2>
-      {winners.length === 0 ? (
-        <p className="text-gray-500 text-center py-4">No winners yet</p>
-      ) : (
-        <div className="flex flex-wrap gap-2">
-          {winners.map((winner, idx) => (
-            <span
-              key={idx}
-              className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium"
-            >
-              {winner}
-            </span>
-          ))}
-        </div>
-      )}
+    <div className="relative group">
+      <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-orange-500/10 to-rose-500/10 rounded-2xl blur-xl" />
+      <div className="relative bg-slate-800/60 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50 shadow-xl">
+        <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+          🏆 Winner List
+        </h2>
+        {winners.length === 0 ? (
+          <p className="text-slate-400 text-center py-6">No winners yet</p>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            {winners.map((winner, idx) => (
+              <span
+                key={idx}
+                className="px-4 py-2 bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-300 rounded-full text-sm font-medium border border-amber-500/30 hover:scale-105 transition-transform cursor-default"
+              >
+                {winner}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

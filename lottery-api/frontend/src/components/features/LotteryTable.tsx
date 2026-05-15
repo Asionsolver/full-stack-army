@@ -69,86 +69,101 @@ export const LotteryTable = ({ refreshTrigger = 0 }: LotteryTableProps) => {
   if (error) return <ErrorMessage message={error} onRetry={refetch} />;
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center flex-wrap gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-800">All Lotteries</h2>
-          <p className="text-gray-500">{lotteries.length} total tickets</p>
-        </div>
-        <div className="flex gap-2">
-          {selectedIds.size > 0 && (
-            <button
-              onClick={handleBulkDelete}
-              disabled={deleting}
-              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 text-sm font-medium"
-            >
-              {deleting ? 'Deleting...' : `Delete (${selectedIds.size})`}
-            </button>
-          )}
-          <input
-            type="text"
-            placeholder="Search by ID or username..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
+    <div className="space-y-6">
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 rounded-2xl blur-2xl" />
+        <div className="relative">
+          <div className="flex justify-between items-center flex-wrap gap-4">
+            <div>
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-gray-800 via-indigo-700 to-purple-700 bg-clip-text text-transparent">
+                All Lotteries
+              </h2>
+              <p className="text-slate-500 mt-1">{lotteries.length} total tickets</p>
+            </div>
+            <div className="flex gap-3">
+              {selectedIds.size > 0 && (
+                <button
+                  onClick={handleBulkDelete}
+                  disabled={deleting}
+                  className="px-4 py-2 bg-gradient-to-r from-red-500 to-rose-600 text-white rounded-xl hover:shadow-lg hover:shadow-red-500/30 disabled:opacity-50 text-sm font-medium transition-all"
+                >
+                  {deleting ? 'Deleting...' : `Delete (${selectedIds.size})`}
+                </button>
+              )}
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search by ID or username..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-64 px-4 py-2 bg-slate-800/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
       {filteredLotteries.length === 0 ? (
-        <div className="text-center py-12 text-gray-500 bg-white rounded-xl border border-gray-100">
-          No lotteries found
+        <div className="relative group">
+          <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-2xl blur-xl" />
+          <div className="relative text-center py-12 text-slate-400 bg-slate-800/30 backdrop-blur-xl rounded-2xl border border-slate-700/50">
+            No lotteries found
+          </div>
         </div>
       ) : (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-4 py-3 text-left">
-                    <input
-                      type="checkbox"
-                      checked={selectedIds.size === filteredLotteries.length && filteredLotteries.length > 0}
-                      onChange={handleSelectAll}
-                      className="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                    />
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Username</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Created</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {filteredLotteries.map((lottery: Lottery) => (
-                  <tr key={lottery.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-4">
+        <div className="relative group">
+          <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-purple-500/5 to-pink-500/5 rounded-2xl blur-xl" />
+          <div className="relative bg-slate-800/60 backdrop-blur-xl rounded-2xl border border-slate-700/50 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-slate-700/30 border-b border-slate-700/50">
+                  <tr>
+                    <th className="px-4 py-4 text-left">
                       <input
                         type="checkbox"
-                        checked={selectedIds.has(lottery.id)}
-                        onChange={() => handleSelectOne(lottery.id)}
-                        className="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                        checked={selectedIds.size === filteredLotteries.length && filteredLotteries.length > 0}
+                        onChange={handleSelectAll}
+                        className="w-4 h-4 rounded border-slate-500 text-indigo-500 focus:ring-indigo-500 cursor-pointer accent-indigo-500 bg-slate-700"
                       />
-                    </td>
-                    <td className="px-6 py-4 text-sm font-mono text-gray-600">{lottery.id}</td>
-                    <td className="px-6 py-4 text-sm text-gray-800">{lottery.username}</td>
-                    <td className="px-6 py-4 text-sm font-medium text-green-600">${lottery.price}</td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
-                      {new Date(lottery.createdAt).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4">
-                      <button
-                        onClick={() => handleDelete(lottery.id)}
-                        className="text-red-500 hover:text-red-700 text-sm font-medium"
-                      >
-                        Delete
-                      </button>
-                    </td>
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase">ID</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase">Username</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase">Price</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase">Created</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-700/50">
+                  {filteredLotteries.map((lottery: Lottery) => (
+                    <tr key={lottery.id} className="hover:bg-slate-700/20 transition-colors">
+                      <td className="px-4 py-4">
+                        <input
+                          type="checkbox"
+                          checked={selectedIds.has(lottery.id)}
+                          onChange={() => handleSelectOne(lottery.id)}
+                          className="w-4 h-4 rounded border-slate-500 text-indigo-500 focus:ring-indigo-500 cursor-pointer accent-indigo-500 bg-slate-700"
+                        />
+                      </td>
+                      <td className="px-6 py-4 text-sm font-mono text-slate-300">{lottery.id}</td>
+                      <td className="px-6 py-4 text-sm text-white font-medium">{lottery.username}</td>
+                      <td className="px-6 py-4 text-sm font-medium text-emerald-400">${lottery.price}</td>
+                      <td className="px-6 py-4 text-sm text-slate-400">
+                        {new Date(lottery.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4">
+                        <button
+                          onClick={() => handleDelete(lottery.id)}
+                          className="text-red-400 hover:text-red-300 text-sm font-medium hover:bg-red-500/10 px-3 py-1.5 rounded-lg transition-all"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}

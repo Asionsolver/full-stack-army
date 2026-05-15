@@ -27,40 +27,55 @@ export const DrawWinners = ({ onSuccess }: DrawWinnersProps) => {
   };
 
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-      <h2 className="text-xl font-bold text-gray-800 mb-6">Draw Winners</h2>
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Number of Winners</label>
-          <input
-            type="number"
-            min="1"
-            value={count}
-            onChange={(e) => setCount(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
-        </div>
-        {error && <div className="p-3 bg-red-50 text-red-600 rounded-lg text-sm">{error}</div>}
-        <button
-          onClick={handleDraw}
-          disabled={loading}
-          className="w-full py-3 px-4 bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-medium rounded-lg hover:from-yellow-600 hover:to-orange-600 disabled:opacity-50 transition-all"
-        >
-          {loading ? 'Drawing...' : '🎲 Draw Winners'}
-        </button>
-        {winners.length > 0 && (
-          <div className="mt-6 p-4 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-lg border border-yellow-200">
-            <h3 className="font-bold text-yellow-800 mb-3">🎉 Winners</h3>
-            <div className="space-y-2">
-              {winners.map((winner, idx) => (
-                <div key={idx} className="flex justify-between items-center text-sm">
-                  <span className="font-medium text-gray-800">{winner.username}</span>
-                  <span className="text-gray-500 font-mono">{winner.id}</span>
-                </div>
-              ))}
-            </div>
+    <div className="relative group">
+      <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-orange-500/10 to-rose-500/10 rounded-2xl blur-xl" />
+      <div className="relative bg-slate-800/60 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50 shadow-xl">
+        <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+          <span className="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-600 rounded-lg flex items-center justify-center text-sm">🎲</span>
+          Draw Winners
+        </h2>
+        <div className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Number of Winners</label>
+            <input
+              type="number"
+              min="1"
+              value={count}
+              onChange={(e) => setCount(e.target.value)}
+              className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+            />
           </div>
-        )}
+          {error && (
+            <div className="p-3 bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl text-sm backdrop-blur-sm">
+              {error}
+            </div>
+          )}
+          <button
+            onClick={handleDraw}
+            disabled={loading}
+            className="w-full py-3 px-4 bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 text-white font-medium rounded-xl hover:shadow-lg hover:shadow-amber-500/30 disabled:opacity-50 transition-all hover:scale-[1.02] active:scale-[0.98]"
+          >
+            {loading ? 'Drawing...' : '🎲 Draw Winners'}
+          </button>
+          {winners.length > 0 && (
+            <div className="relative mt-6 p-5 bg-gradient-to-br from-amber-500/10 via-orange-500/10 to-rose-500/10 rounded-xl border border-amber-500/20 backdrop-blur-xl overflow-hidden">
+              <div className="absolute -top-10 -right-10 w-20 h-20 bg-amber-500/20 rounded-full blur-2xl" />
+              <div className="relative">
+                <h3 className="font-bold text-white mb-4 flex items-center gap-2">
+                  <span className="text-2xl">🎉</span> Winners
+                </h3>
+                <div className="space-y-3">
+                  {winners.map((winner, idx) => (
+                    <div key={idx} className="flex justify-between items-center p-3 bg-slate-700/30 rounded-xl">
+                      <span className="font-medium text-white">{winner.username}</span>
+                      <span className="text-slate-400 font-mono text-sm">{winner.id}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

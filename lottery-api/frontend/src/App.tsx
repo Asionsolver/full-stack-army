@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Dashboard, LotteryList, SellForm, DrawWinners, WinnerList } from './components/Dashboard';
+import { DashboardPage } from './pages/DashboardPage';
+import { DrawWinners, SellForm, WinnerList } from './components';
+import { LotteriesPage } from './pages/LotteriesPage';
 
 type Tab = 'dashboard' | 'lotteries' | 'sell' | 'draw' | 'winners';
 
@@ -22,9 +24,9 @@ function App() {
   const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
-        return <Dashboard />;
+        return <DashboardPage />;
       case 'lotteries':
-        return <LotteryList refreshTrigger={refreshTrigger} />;
+        return <LotteriesPage refreshTrigger={refreshTrigger} />;
       case 'sell':
         return <SellForm onSuccess={handleRefresh} />;
       case 'draw':
@@ -37,29 +39,39 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <div className="min-h-screen bg-slate-900">
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMyNzI5M2YiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-40" />
+      
+      <nav className="relative bg-slate-800/80 backdrop-blur-xl border-b border-slate-700/50 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <span className="text-2xl mr-2">🎰</span>
-              <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                Lottery Admin
-              </span>
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl blur-sm" />
+                <div className="relative flex items-center gap-2 px-3 py-1.5">
+                  <span className="text-2xl">🎰</span>
+                  <span className="text-xl font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                    Lottery Admin
+                  </span>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center space-x-1">
+            <div className="flex items-center space-x-2">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  className={`relative px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
                     activeTab === tab.id
-                      ? 'bg-indigo-100 text-indigo-700'
-                      : 'text-gray-600 hover:bg-gray-100'
+                      ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/30'
+                      : 'text-slate-300 hover:bg-slate-700/50 hover:text-white'
                   }`}
                 >
-                  <span className="mr-1">{tab.icon}</span>
+                  <span className="mr-1.5">{tab.icon}</span>
                   <span className="hidden sm:inline">{tab.label}</span>
+                  {activeTab === tab.id && (
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-white rounded-full" />
+                  )}
                 </button>
               ))}
             </div>
@@ -67,15 +79,21 @@ function App() {
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {showSidebar ? (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">{renderContent()}</div>
             <div className="space-y-6">
               <WinnerList refreshTrigger={refreshTrigger} />
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <h3 className="font-bold text-gray-800 mb-2">Quick Stats</h3>
-                <p className="text-sm text-gray-500">Check the dashboard for detailed statistics</p>
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-2xl blur-xl" />
+                <div className="relative bg-slate-800/60 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50">
+                  <h3 className="font-bold text-white mb-2 flex items-center gap-2">
+                    <span className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse" />
+                    Quick Stats
+                  </h3>
+                  <p className="text-sm text-slate-400">Check the dashboard for detailed statistics</p>
+                </div>
               </div>
             </div>
           </div>
@@ -84,8 +102,8 @@ function App() {
         )}
       </main>
 
-      <footer className="border-t border-gray-200 bg-white mt-auto">
-        <div className="max-w-7xl mx-auto px-4 py-4 text-center text-sm text-gray-500">
+      <footer className="relative border-t border-slate-700/50 bg-slate-800/50 backdrop-blur-xl mt-auto">
+        <div className="max-w-7xl mx-auto px-4 py-4 text-center text-sm text-slate-400">
           Lottery Management System © 2026
         </div>
       </footer>

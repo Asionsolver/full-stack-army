@@ -1,4 +1,4 @@
-import { LotteryTable } from '../components';
+import { LotteryTable } from "../components";
 
 interface LotteriesPageProps {
   refreshTrigger?: number;
