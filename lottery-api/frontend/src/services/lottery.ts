@@ -1,6 +1,6 @@
 import type { Lottery, Statistics, HistoryItem } from '../types';
 
-const BASE_URL = 'http://localhost:5000/api/v1';
+const BASE_URL = 'http://localhost:3000/api/v1';
 
 const handleResponse = async <T>(response: Response): Promise<T> => {
   if (!response.ok) {

@@ -75,10 +75,10 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 dark:bg-slate-950">
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMyNzI5M2YiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-40" />
-
-      <nav className="relative bg-slate-800/80 backdrop-blur-xl border-b border-slate-700/50 sticky top-0 z-50">
+    <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-300">
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMyNzI5M2YiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-40 dark:opacity-20" />
+      
+      <nav className="relative bg-[var(--bg-card)]/80 backdrop-blur-xl border-b border-[var(--border-color)] sticky top-0 z-50 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
@@ -101,7 +101,7 @@ function App() {
                   className={`relative px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
                     activeTab === tab.id
                       ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/30'
-                      : 'text-slate-300 hover:bg-slate-700/50 hover:text-white'
+                      : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)]'
                   }`}
                 >
                   <span className="mr-1.5">{tab.icon}</span>
@@ -126,12 +126,12 @@ function App() {
                 <WinnerList refreshTrigger={refreshTrigger} />
                 <div className="relative group">
                   <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-2xl blur-xl" />
-                  <div className="relative bg-slate-800/60 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50">
-                    <h3 className="font-bold text-white mb-2 flex items-center gap-2">
+                  <div className="relative bg-[var(--bg-card)]/60 backdrop-blur-xl rounded-2xl p-6 border border-[var(--border-color)]">
+                    <h3 className="font-bold text-[var(--text-primary)] mb-2 flex items-center gap-2">
                       <span className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse" />
                       Quick Stats
                     </h3>
-                    <p className="text-sm text-slate-400">Check the dashboard for detailed statistics</p>
+                    <p className="text-sm text-[var(--text-tertiary)]">Check the dashboard for detailed statistics</p>
                   </div>
                 </div>
               </div>
@@ -142,8 +142,8 @@ function App() {
         </Suspense>
       </main>
 
-      <footer className="relative border-t border-slate-700/50 bg-slate-800/50 backdrop-blur-xl mt-auto">
-        <div className="max-w-7xl mx-auto px-4 py-4 text-center text-sm text-slate-400">
+      <footer className="relative border-t border-[var(--border-color)] bg-[var(--bg-card)]/50 backdrop-blur-xl mt-auto transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-4 py-4 text-center text-sm text-[var(--text-tertiary)]">
           Lottery Management System © 2026
         </div>
       </footer>

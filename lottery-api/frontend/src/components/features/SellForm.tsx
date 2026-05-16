@@ -1,41 +1,41 @@
-import { useState } from 'react';
-import { lotteryAPI } from '../../services/lottery';
+import { useState } from 'react'
+import { lotteryAPI } from '../../services/lottery'
 
 interface SellFormProps {
-  onSuccess: () => void;
+  onSuccess: () => void
 }
 
 export const SellForm = ({ onSuccess }: SellFormProps) => {
-  const [formData, setFormData] = useState({ username: '', price: '', quantity: '1' });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [formData, setFormData] = useState({ username: '', price: '', quantity: '1' })
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
+    e.preventDefault()
+    setError('')
+    setLoading(true)
     try {
-      const price = parseFloat(formData.price);
-      const quantity = parseInt(formData.quantity);
+      const price = parseFloat(formData.price)
+      const quantity = parseInt(formData.quantity)
       if (quantity > 1) {
-        await lotteryAPI.bulkSell(formData.username, price, quantity);
+        await lotteryAPI.bulkSell(formData.username, price, quantity)
       } else {
-        await lotteryAPI.sell(formData.username, price);
+        await lotteryAPI.sell(formData.username, price)
       }
-      setFormData({ username: '', price: '', quantity: '1' });
-      onSuccess();
+      setFormData({ username: '', price: '', quantity: '1' })
+      onSuccess()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to sell lottery');
+      setError(err instanceof Error ? err.message : 'Failed to sell lottery')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <div className="relative group">
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-purple-500/10 to-pink-500/10 rounded-2xl blur-xl" />
-      <div className="relative bg-slate-800/60 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50 shadow-xl">
-        <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+      <div className="relative bg-[var(--bg-card)]/60 backdrop-blur-xl rounded-2xl p-6 border border-[var(--border-color)] shadow-xl">
+        <h2 className="text-xl font-bold text-[var(--text-primary)] mb-6 flex items-center gap-2">
           <span className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center text-sm">💵</span>
           Sell Lottery
         </h2>
@@ -46,19 +46,19 @@ export const SellForm = ({ onSuccess }: SellFormProps) => {
             </div>
           )}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">Username</label>
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Username</label>
             <input
               type="text"
               required
               value={formData.username}
               onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-              className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+              className="w-full px-4 py-3 bg-[var(--bg-input)] border border-[var(--border-color)] rounded-xl text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
               placeholder="Enter username"
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Price ($)</label>
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Price ($)</label>
               <input
                 type="number"
                 step="0.01"
@@ -66,18 +66,18 @@ export const SellForm = ({ onSuccess }: SellFormProps) => {
                 required
                 value={formData.price}
                 onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-3 bg-[var(--bg-input)] border border-[var(--border-color)] rounded-xl text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                 placeholder="0.00"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Quantity</label>
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Quantity</label>
               <input
                 type="number"
                 min="1"
                 value={formData.quantity}
                 onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
-                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-3 bg-[var(--bg-input)] border border-[var(--border-color)] rounded-xl text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
               />
             </div>
           </div>
@@ -91,5 +91,5 @@ export const SellForm = ({ onSuccess }: SellFormProps) => {
         </form>
       </div>
     </div>
-  );
-};
+  )
+}

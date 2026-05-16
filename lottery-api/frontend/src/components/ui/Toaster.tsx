@@ -1,4 +1,4 @@
-import { Toaster as ReactHotToaster } from 'react-hot-toast';
+import { Toaster as ReactHotToaster } from 'react-hot-toast'
 
 export const Toaster = () => (
   <ReactHotToaster
@@ -6,26 +6,26 @@ export const Toaster = () => (
     toastOptions={{
       duration: 4000,
       style: {
-        background: '#1e293b',
-        color: '#f1f5f9',
-        border: '1px solid #334155',
+        background: 'var(--bg-card)',
+        color: 'var(--text-primary)',
+        border: '1px solid var(--border-color)',
         borderRadius: '12px',
         padding: '12px 16px',
       },
       success: {
         iconTheme: {
           primary: '#22c55e',
-          secondary: '#1e293b',
+          secondary: 'var(--bg-card)',
         },
       },
       error: {
         iconTheme: {
           primary: '#ef4444',
-          secondary: '#1e293b',
+          secondary: 'var(--bg-card)',
         },
       },
     }}
   />
-);
+)
 
-export default Toaster;
+export default Toaster

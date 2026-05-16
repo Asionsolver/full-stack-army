@@ -16,12 +16,12 @@ export const WinnerList = ({ refreshTrigger = 0 }: WinnerListProps) => {
   return (
     <div className="relative group">
       <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-orange-500/10 to-rose-500/10 rounded-2xl blur-xl" />
-      <div className="relative bg-slate-800/60 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50 shadow-xl">
-        <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+      <div className="relative bg-[var(--bg-card)]/60 backdrop-blur-xl rounded-2xl p-6 border border-[var(--border-color)] shadow-xl">
+        <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4 flex items-center gap-2">
           🏆 Winner List
         </h2>
         {winners.length === 0 ? (
-          <p className="text-slate-400 text-center py-6">No winners yet</p>
+          <p className="text-[var(--text-tertiary)] text-center py-6">No winners yet</p>
         ) : (
           <div className="flex flex-wrap gap-2">
             {winners.map((winner: string, idx: number) => (

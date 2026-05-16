@@ -28,8 +28,8 @@ export const useStatistics = () => {
   return useQuery({
     queryKey: ['statistics'],
     queryFn: async () => {
-      const { statistics } = await lotteryAPI.getStatistics()
-      return statistics
+      const response = await lotteryAPI.getStatistics()
+      return response.statistics
     },
     staleTime: 1000 * 60,
   })

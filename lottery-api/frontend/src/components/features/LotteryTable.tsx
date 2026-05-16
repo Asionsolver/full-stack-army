@@ -80,10 +80,10 @@ export const LotteryTable = ({ refreshTrigger = 0 }: LotteryTableProps) => {
         <div className="relative">
           <div className="flex justify-between items-center flex-wrap gap-4">
             <div>
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-gray-800 via-indigo-700 to-purple-700 bg-clip-text text-transparent dark:bg-gradient-to-r dark:from-gray-200 dark:via-indigo-300 dark:to-purple-300">
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-slate-800 via-indigo-700 to-purple-700 dark:from-slate-200 dark:via-indigo-300 dark:to-purple-300 bg-clip-text text-transparent">
                 All Lotteries
               </h2>
-              <p className="text-slate-500 mt-1 dark:text-slate-400">{totalCount} total tickets</p>
+              <p className="text-[var(--text-tertiary)] mt-1">{totalCount} total tickets</p>
             </div>
             <div className="flex gap-3">
               {selectedIds.size > 0 && (
@@ -108,49 +108,49 @@ export const LotteryTable = ({ refreshTrigger = 0 }: LotteryTableProps) => {
       {allLotteries.length === 0 ? (
         <div className="relative group">
           <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-2xl blur-xl" />
-          <div className="relative text-center py-12 text-slate-400 bg-slate-800/30 backdrop-blur-xl rounded-2xl border border-slate-700/50">
+          <div className="relative text-center py-12 text-[var(--text-tertiary)] bg-[var(--bg-card)]/30 backdrop-blur-xl rounded-2xl border border-[var(--border-color)]">
             No lotteries found
           </div>
         </div>
       ) : (
         <div className="relative group">
           <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-purple-500/5 to-pink-500/5 rounded-2xl blur-xl" />
-          <div className="relative bg-slate-800/60 backdrop-blur-xl rounded-2xl border border-slate-700/50 overflow-hidden">
+          <div className="relative bg-[var(--bg-card)]/60 backdrop-blur-xl rounded-2xl border border-[var(--border-color)] overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-slate-700/30 border-b border-slate-700/50">
+                <thead className="bg-[var(--bg-secondary)]/30 border-b border-[var(--border-color)]">
                   <tr>
                     <th className="px-4 py-4 text-left">
                       <input
                         type="checkbox"
                         checked={selectedIds.size === allLotteries.length && allLotteries.length > 0}
                         onChange={handleSelectAll}
-                        className="w-4 h-4 rounded border-slate-500 text-indigo-500 focus:ring-indigo-500 cursor-pointer accent-indigo-500 bg-slate-700"
+                        className="w-4 h-4 rounded border-[var(--border-color)] text-indigo-500 focus:ring-indigo-500 cursor-pointer accent-indigo-500 bg-[var(--bg-input)]"
                       />
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase">ID</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase">Username</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase">Price</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase">Created</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase">Actions</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-tertiary)] uppercase">ID</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-tertiary)] uppercase">Username</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-tertiary)] uppercase">Price</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-tertiary)] uppercase">Created</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-tertiary)] uppercase">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-tertiary)] uppercase">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-700/50">
+                <tbody className="divide-y divide-[var(--border-color)]">
                   {lotteries.map((lottery: Lottery) => (
-                    <tr key={lottery.id} className="hover:bg-slate-700/20 transition-colors">
+                    <tr key={lottery.id} className="hover:bg-[var(--bg-secondary)]/20 transition-colors">
                       <td className="px-4 py-4">
                         <input
                           type="checkbox"
                           checked={selectedIds.has(lottery.id)}
                           onChange={() => handleSelectOne(lottery.id)}
-                          className="w-4 h-4 rounded border-slate-500 text-indigo-500 focus:ring-indigo-500 cursor-pointer accent-indigo-500 bg-slate-700"
+                          className="w-4 h-4 rounded border-[var(--border-color)] text-indigo-500 focus:ring-indigo-500 cursor-pointer accent-indigo-500 bg-[var(--bg-input)]"
                         />
                       </td>
-                      <td className="px-6 py-4 text-sm font-mono text-slate-300">{lottery.id.slice(0, 8)}...</td>
-                      <td className="px-6 py-4 text-sm text-white font-medium">{lottery.username}</td>
+                      <td className="px-6 py-4 text-sm font-mono text-[var(--text-secondary)]">{lottery.id.slice(0, 8)}...</td>
+                      <td className="px-6 py-4 text-sm text-[var(--text-primary)] font-medium">{lottery.username}</td>
                       <td className="px-6 py-4 text-sm font-medium text-emerald-400">${lottery.price}</td>
-                      <td className="px-6 py-4 text-sm text-slate-400">
+                      <td className="px-6 py-4 text-sm text-[var(--text-tertiary)]">
                         {new Date(lottery.createdAt).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4">
@@ -159,7 +159,7 @@ export const LotteryTable = ({ refreshTrigger = 0 }: LotteryTableProps) => {
                             Winner
                           </span>
                         ) : (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-400">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--bg-secondary)]/50 text-[var(--text-tertiary)]">
                             Regular
                           </span>
                         )}

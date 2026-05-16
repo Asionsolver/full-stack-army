@@ -207,10 +207,45 @@ class MyDB {
     const totalLotteries = this.count();
     const totalSales = this.getTotalSales();
     const averagePrice = totalLotteries > 0 ? totalSales / totalLotteries : 0;
+    const totalWinners = this.winners.length;
+
+    // Calculate price distribution
+    const priceDistribution = {};
+    this.lotteries.forEach((lottery) => {
+      const priceKey = String(lottery.price);
+      priceDistribution[priceKey] = (priceDistribution[priceKey] || 0) + 1;
+    });
+
+    // Calculate user distribution
+    const userDistribution = {};
+    this.lotteries.forEach((lottery) => {
+      userDistribution[lottery.username] = (userDistribution[lottery.username] || 0) + 1;
+    });
+
+    // Calculate date distribution (last 7 days)
+    const dateDistribution = {};
+    const now = new Date();
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(now);
+      date.setDate(date.getDate() - i);
+      const dateKey = date.toISOString().split('T')[0];
+      dateDistribution[dateKey] = 0;
+    }
+    this.lotteries.forEach((lottery) => {
+      const dateKey = new Date(lottery.createdAt).toISOString().split('T')[0];
+      if (dateDistribution.hasOwnProperty(dateKey)) {
+        dateDistribution[dateKey]++;
+      }
+    });
+
     return {
       totalLotteries,
       totalSales,
+      totalWinners,
       averagePrice,
+      priceDistribution,
+      userDistribution,
+      dateDistribution,
     };
   }
 
