@@ -11,8 +11,9 @@ const LotteriesPage = lazy(() => import('./pages/LotteriesPage').then(m => ({ de
 const WinnerList = lazy(() => import('./components/features/WinnerList').then(m => ({ default: m.WinnerList })))
 const SellForm = lazy(() => import('./components/features/SellForm').then(m => ({ default: m.SellForm })))
 const DrawWinners = lazy(() => import('./components/features/DrawWinners').then(m => ({ default: m.DrawWinners })))
+const ReportsPage = lazy(() => import('./pages/ReportsPage').then(m => ({ default: m.ReportsPage })))
 
-type Tab = 'dashboard' | 'lotteries' | 'sell' | 'draw' | 'winners'
+type Tab = 'dashboard' | 'lotteries' | 'sell' | 'draw' | 'winners' | 'reports'
 
 const PageLoader = () => (
   <div className="flex items-center justify-center min-h-[400px]">
@@ -55,6 +56,7 @@ function App() {
     { id: 'sell', label: 'Sell', icon: '💵' },
     { id: 'draw', label: 'Draw', icon: '🎲' },
     { id: 'winners', label: 'Winners', icon: '🏆' },
+    { id: 'reports', label: 'Reports', icon: '📈' },
   ] as const
 
   const renderContent = () => {
@@ -69,6 +71,8 @@ function App() {
         return <DrawWinners onSuccess={handleRefresh} />
       case 'winners':
         return <WinnerList refreshTrigger={refreshTrigger} />
+      case 'reports':
+        return <ReportsPage />
       default:
         return null
     }

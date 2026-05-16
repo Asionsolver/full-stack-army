@@ -266,6 +266,149 @@ class MyDB {
     this.lotteries = [];
     return deletedLotteries;
   }
+
+  // Get Daily Report
+  getDailyReport(date = new Date()) {
+    const targetDate = new Date(date);
+    targetDate.setHours(0, 0, 0, 0);
+    const nextDate = new Date(targetDate);
+    nextDate.setDate(nextDate.getDate() + 1);
+
+    const dayLotteries = this.lotteries.filter((lottery) => {
+      const createdAt = new Date(lottery.createdAt);
+      return createdAt >= targetDate && createdAt < nextDate;
+    });
+
+    const totalSales = dayLotteries.reduce((sum, l) => sum + l.price, 0);
+    const userStats = {};
+    dayLotteries.forEach((lottery) => {
+      if (!userStats[lottery.username]) {
+        userStats[lottery.username] = { count: 0, totalPrice: 0 };
+      }
+      userStats[lottery.username].count++;
+      userStats[lottery.username].totalPrice += lottery.price;
+    });
+
+    const topUsers = Object.entries(userStats)
+      .map(([username, data]) => ({ username, ...data }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+
+    return {
+      period: 'daily',
+      date: targetDate.toISOString().split('T')[0],
+      totalSales,
+      totalLotteries: dayLotteries.length,
+      totalWinners: this.winners.filter((w) => {
+        const drawnAt = new Date(w.createdAt);
+        return drawnAt >= targetDate && drawnAt < nextDate;
+      }).length,
+      averagePrice: dayLotteries.length > 0 ? totalSales / dayLotteries.length : 0,
+      topUsers,
+    };
+  }
+
+  // Get Weekly Report
+  getWeeklyReport(date = new Date()) {
+    const targetDate = new Date(date);
+    targetDate.setHours(0, 0, 0, 0);
+    const weekStart = new Date(targetDate);
+    weekStart.setDate(weekStart.getDate() - 6);
+    const weekEnd = new Date(targetDate);
+    weekEnd.setDate(weekEnd.getDate() + 1);
+
+    const weekLotteries = this.lotteries.filter((lottery) => {
+      const createdAt = new Date(lottery.createdAt);
+      return createdAt >= weekStart && createdAt < weekEnd;
+    });
+
+    const totalSales = weekLotteries.reduce((sum, l) => sum + l.price, 0);
+    const dailyData = {};
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(weekStart);
+      d.setDate(d.getDate() + i);
+      dailyData[d.toISOString().split('T')[0]] = { count: 0, sales: 0 };
+    }
+    weekLotteries.forEach((lottery) => {
+      const day = new Date(lottery.createdAt).toISOString().split('T')[0];
+      if (dailyData[day]) {
+        dailyData[day].count++;
+        dailyData[day].sales += lottery.price;
+      }
+    });
+
+    const userStats = {};
+    weekLotteries.forEach((lottery) => {
+      if (!userStats[lottery.username]) {
+        userStats[lottery.username] = { count: 0, totalPrice: 0 };
+      }
+      userStats[lottery.username].count++;
+      userStats[lottery.username].totalPrice += lottery.price;
+    });
+
+    const topUsers = Object.entries(userStats)
+      .map(([username, data]) => ({ username, ...data }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10);
+
+    return {
+      period: 'weekly',
+      startDate: weekStart.toISOString().split('T')[0],
+      endDate: new Date(weekEnd.getTime() - 1).toISOString().split('T')[0],
+      totalSales,
+      totalLotteries: weekLotteries.length,
+      totalWinners: this.winners.filter((w) => {
+        const drawnAt = new Date(w.createdAt);
+        return drawnAt >= weekStart && drawnAt < weekEnd;
+      }).length,
+      averagePrice: weekLotteries.length > 0 ? totalSales / weekLotteries.length : 0,
+      dailyData,
+      topUsers,
+    };
+  }
+
+  // Get Monthly Report
+  getMonthlyReport(year = new Date().getFullYear(), month = new Date().getMonth() + 1) {
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 1);
+
+    const monthLotteries = this.lotteries.filter((lottery) => {
+      const createdAt = new Date(lottery.createdAt);
+      return createdAt >= startDate && createdAt < endDate;
+    });
+
+    const totalSales = monthLotteries.reduce((sum, l) => sum + l.price, 0);
+    const userStats = {};
+    monthLotteries.forEach((lottery) => {
+      if (!userStats[lottery.username]) {
+        userStats[lottery.username] = { count: 0, totalPrice: 0 };
+      }
+      userStats[lottery.username].count++;
+      userStats[lottery.username].totalPrice += lottery.price;
+    });
+
+    const topUsers = Object.entries(userStats)
+      .map(([username, data]) => ({ username, ...data }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10);
+
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'];
+
+    return {
+      period: 'monthly',
+      month: monthNames[month - 1],
+      year,
+      totalSales,
+      totalLotteries: monthLotteries.length,
+      totalWinners: this.winners.filter((w) => {
+        const drawnAt = new Date(w.createdAt);
+        return drawnAt >= startDate && drawnAt < endDate;
+      }).length,
+      averagePrice: monthLotteries.length > 0 ? totalSales / monthLotteries.length : 0,
+      topUsers,
+    };
+  }
 }
 const myDB = new MyDB();
 

@@ -1,4 +1,4 @@
-import type { Lottery, Statistics, HistoryItem } from '../types';
+import type { Lottery, Statistics, HistoryItem, Report } from '../types';
 
 const BASE_URL = 'http://localhost:3000/api/v1';
 
@@ -110,6 +110,27 @@ export const lotteryAPI = {
 
   healthCheck: async (): Promise<{ message: string }> => {
     const response = await fetch(`${BASE_URL}/../health`);
+    return handleResponse(response);
+  },
+
+  getDailyReport: async (date?: string): Promise<{ report: Report }> => {
+    const url = date ? `${BASE_URL}/lotteries/reports/daily?date=${date}` : `${BASE_URL}/lotteries/reports/daily`;
+    const response = await fetch(url);
+    return handleResponse(response);
+  },
+
+  getWeeklyReport: async (date?: string): Promise<{ report: Report }> => {
+    const url = date ? `${BASE_URL}/lotteries/reports/weekly?date=${date}` : `${BASE_URL}/lotteries/reports/weekly`;
+    const response = await fetch(url);
+    return handleResponse(response);
+  },
+
+  getMonthlyReport: async (year?: number, month?: number): Promise<{ report: Report }> => {
+    const params = new URLSearchParams();
+    if (year) params.append('year', String(year));
+    if (month) params.append('month', String(month));
+    const url = `${BASE_URL}/lotteries/reports/monthly?${params.toString()}`;
+    const response = await fetch(url);
     return handleResponse(response);
   },
 };

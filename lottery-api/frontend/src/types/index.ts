@@ -26,3 +26,22 @@ export interface ApiResponse<T> {
   message?: string;
   data?: T;
 }
+
+export interface Report {
+  period: 'daily' | 'weekly' | 'monthly';
+  date?: string;
+  startDate?: string;
+  endDate?: string;
+  month?: string;
+  year?: number;
+  totalSales: number;
+  totalLotteries: number;
+  totalWinners: number;
+  averagePrice: number;
+  topUsers: Array<{
+    username: string;
+    count: number;
+    totalPrice: number;
+  }>;
+  dailyData?: Record<string, { count: number; sales: number }>;
+}
